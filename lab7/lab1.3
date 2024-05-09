@@ -1,0 +1,151 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Клас, що представляє товар
+class Product {
+private:
+    string name;
+    double price;
+
+public:
+    // Конструктор з параметрами
+    Product(const string& n, double p) : name(n), price(p) {}
+
+    // Функція для отримання ціни товару
+    double getPrice() const {
+        return price;
+    }
+};
+
+// Клас, що представляє замовлення клієнта
+class Order {
+private:
+    vector<Product> products;
+    double totalCost;
+    bool paid;
+
+public:
+    // Конструктор за замовчуванням
+    Order() : totalCost(0.0), paid(false) {}
+
+    // Додавання товару до замовлення
+    void addProduct(const Product& product) {
+        products.push_back(product);
+        totalCost += product.getPrice();
+    }
+
+    // Функція для отримання загальної вартості замовлення
+    double getTotalCost() const {
+        return totalCost;
+    }
+
+    // Функція для позначення замовлення як оплачене
+    void markAsPaid() {
+        paid = true;
+    }
+
+    // Перевірка, чи замовлення оплачене
+    bool isPaid() const {
+        return paid;
+    }
+};
+
+// Клас, що представляє продаж товару
+class Sale {
+private:
+    Product product;
+    double price;
+    bool paid;
+
+public:
+    // Конструктор з параметрами
+    Sale(const Product& p, double pr) : product(p), price(pr), paid(false) {}
+
+    // Функція для позначення продажу як оплаченого
+    void markAsPaid() {
+        paid = true;
+    }
+
+    // Перевірка, чи продаж оплачений
+    bool isPaid() const {
+        return paid;
+    }
+};
+
+// Клас для "чорного списку" неплатників
+class Blacklist {
+private:
+    vector<string> customers;
+
+public:
+    // Додавання клієнта до "чорного списку"
+    void addCustomer(const string& customer) {
+        customers.push_back(customer);
+    }
+
+    // Перевірка, чи клієнт у "чорному списку"
+    bool isBlacklisted(const string& customer) const {
+        for (const auto& name : customers) {
+            if (name == customer) {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+int main() {
+    // Створення товарів
+    Product laptop("Ноутбук", 1500.0);
+    Product smartphone("Смартфон", 800.0);
+
+    // Створення замовлення
+    Order order;
+    order.addProduct(laptop);
+    order.addProduct(smartphone);
+
+    // Перевірка вартості замовлення
+    cout << "Загальна вартість замовлення: $" << order.getTotalCost() << endl;
+
+    // Позначення замовлення як оплаченого
+    order.markAsPaid();
+
+    // Створення продажу
+    Sale sale(laptop, laptop.getPrice());
+
+    // Перевірка оплати замовлення і продажу
+    if (order.isPaid()) {
+        cout << "Замовлення оплачене." << endl;
+    } else {
+        cout << "Замовлення не оплачене." << endl;
+    }
+
+    if (sale.isPaid()) {
+        cout << "Продаж оплачена." << endl;
+    } else {
+        cout << "Продаж не оплачена." << endl;
+    }
+
+    // Створення "чорного списку" неплатників
+    Blacklist blacklist;
+    blacklist.addCustomer("Іванов");
+    blacklist.addCustomer("Петров");
+
+    // Перевірка, чи клієнт у "чорному списку"
+    if (blacklist.isBlacklisted("Іванов")) {
+        cout << "Клієнт Іванов у чорному списку." << endl;
+    } else {
+        cout << "Клієнт Іванов не у чорному списку." << endl;
+    }
+
+    if (blacklist.isBlacklisted("Сидоров")) {
+        cout << "Клієнт Сидоров у чорному списку." << endl;
+    } else {
+        cout << "Клієнт Сидоров не у чорному списку." << endl;
+    }
+
+    return 0;
+}
